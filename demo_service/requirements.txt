@@ -1,0 +1,5 @@
+fastapi
+uvicorn[standard]
+python-dotenv
+# Use the published SDK
+x402-notify>=0.1.0

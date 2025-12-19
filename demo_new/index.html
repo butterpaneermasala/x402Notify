@@ -1,0 +1,35 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Whale Watcher (Demo)</title>
+    <style>
+      body { font-family: Inter, system-ui, Arial; background:#0f1724; color:#fff; padding:24px }
+      .card{background:#0b1220;padding:16px;border-radius:8px;max-width:720px;margin:0 auto}
+      input,button{padding:8px 12px;margin:6px}
+      canvas{background:#071024;border-radius:6px;width:100%;height:160px}
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h2>Whale Watcher — Demo</h2>
+      <p>Enter your Telegram chat id and subscribe. Subscriptions are kept in memory on the demo agent service.</p>
+
+      <div>
+        <input id="chat" placeholder="Your Telegram chat id" />
+        <button id="sub">Subscribe</button>
+        <button id="unsub">Unsubscribe</button>
+      </div>
+
+      <div style="margin-top:12px">
+        <strong>Current Price: </strong><span id="price">-</span>
+        &nbsp; <strong>Subscribers: </strong><span id="count">0</span>
+      </div>
+
+      <canvas id="chart" width="720" height="160"></canvas>
+    </div>
+
+    <script src="main.js"></script>
+  </body>
+ </html>
