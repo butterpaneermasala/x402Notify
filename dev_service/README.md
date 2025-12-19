@@ -49,6 +49,16 @@ uvicorn app:app --reload --port 8001
 - Use a secrets manager (Vault, AWS Secrets Manager) in production.
 - Use a minimal funded wallet and rotate keys regularly.
 
+## Delivery Secrets (important)
+- `dev_service` is a developer/third-party example service and MUST NOT contain
+- production delivery secrets such as the Gateway's `TELEGRAM_BOT_TOKEN`.
+- The intended architecture is:
+  - `dev_service` (or your SDK) acts as a client/agent that calls the Gateway's
+    `/notify` endpoint after paying the x402 fee.
+  - The Gateway (operated by the deployment owner) holds the Telegram bot
+    credential and is solely responsible for sending messages.
+  - Do not share Gateway secrets with third-party services or SDK consumers.
+
 ## Notes
 This example intentionally keeps logic simple and synchronous to be easy to follow. In production you should:
 - Queue notifications and process them asynchronously.
