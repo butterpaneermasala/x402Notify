@@ -29,9 +29,48 @@ const REDIS_CONNECT_RETRIES = parseInt(process.env.REDIS_CONNECT_RETRIES || "5",
 const REDIS_CONNECT_DELAY_MS = parseInt(process.env.REDIS_CONNECT_DELAY_MS || "2000", 10);
 let redisClient: Redis | null = null;
 
+function parseRedisUrl(urlStr: string) {
+    try {
+        const u = new URL(urlStr);
+        const isTls = u.protocol === "rediss:" || u.protocol === "tls:";
+        const host = u.hostname;
+        const port = u.port ? parseInt(u.port, 10) : (isTls ? 6380 : 6379);
+        const pathname = u.pathname || "/0";
+        const db = pathname.replace("/", "") || "0";
+        // username may be present in auth info
+        const username = u.username || undefined;
+        // password may be in password or in auth portion
+        const password = u.password || undefined;
+        return { host, port, db, username, password, tls: isTls };
+    } catch (e) {
+        console.warn("Invalid REDIS_URL format:", urlStr, e);
+        return null;
+    }
+}
+
 if (REDIS_URL) {
-    redisClient = new Redis(REDIS_URL);
-    redisClient.on("error", (err) => console.warn("Redis error:", err));
+    const parsed = parseRedisUrl(REDIS_URL);
+    if (parsed) {
+        const opts: any = {
+            host: parsed.host,
+            port: parsed.port,
+        };
+        if (parsed.username) opts.username = parsed.username;
+        if (parsed.password) opts.password = parsed.password;
+        // enable TLS when rediss:// provided
+        if (parsed.tls) {
+            opts.tls = { rejectUnauthorized: true };
+        }
+
+        try {
+            redisClient = new Redis(opts);
+            redisClient.on("error", (err) => console.warn("Redis error:", err));
+            console.log("🔐 Redis client initialized from REDIS_URL");
+        } catch (e) {
+            console.warn("Failed to initialize Redis client:", e);
+            redisClient = null;
+        }
+    }
 }
 
 // ============================================
