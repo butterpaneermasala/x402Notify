@@ -1,6 +1,13 @@
 fastapi
 uvicorn[standard]
 python-dotenv
-# The SDK in this mono-repo should be installed in editable mode:
+# Use the published SDK from PyPI for production/demo builds
+x402-notify>=0.1.0
+
+# Optional: queue worker dependencies (if you plan to use Redis/RQ)
+rq
+redis
+
+# For local development, you can still install the SDK in editable mode:
 # pip install -e ../sdk/python
 # For on-chain payments the SDK requires web3/eth-account etc. See sdk/python/pyproject.toml

@@ -1,8 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import "./index.css";
 
-// Gateway URL - set via environment variable for deployment
-const GATEWAY_URL = import.meta.env.VITE_GATEWAY_URL || "http://localhost:3000";
 // Developer agent service (server-side) - demo will call this service to have the agent pay & send
 const DEV_SERVICE_URL = import.meta.env.VITE_DEV_SERVICE_URL || "http://localhost:8001";
 
