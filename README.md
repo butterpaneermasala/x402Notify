@@ -1,80 +1,46 @@
-# x402-Notify
+x402-Notify — SDK + demo for permissionless Telegram notifications
+===============================================================
 
-**Permissionless notification infrastructure for AI Agents**
+This repository contains the core Python SDK (`sdk/python/x402_notify`) and a lightweight demo agent service that shows how an agent can pay on-chain to send Telegram notifications using the x402 "Payment Required" flow.
 
-> Send Telegram messages using x402 protocol. No API keys. No subscriptions. Just crypto.
+What you'll find here
+- **`sdk/python/`** — Python SDK (`x402_notify`) with `NotifyClient` and helpers.
+- **`demo_service/`** — FastAPI in-memory demo agent service (subscribe/unsubscribe/status).
+- **`docs/`** — Design notes and protocol references.
+- **`.github/`** — CI workflows (build, tests, publish).
 
-## 🏗️ Architecture
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                    x402-Notify                               │
-├─────────────────────────────────────────────────────────────┤
-│                                                              │
-│   /gateway         Node.js API that accepts x402 payments   │
-│                    and delivers Telegram messages            │
-│                                                              │
-│   /sdk/python      Python SDK for developers                 │
-│                    pip install x402-notify                   │
-│                                                              │
-│   /demo            Example "Whale Watcher" app               │
-│                    Shows SDK integration                     │
-│                                                              │
-└─────────────────────────────────────────────────────────────┘
-```
-
-## 🚀 Quick Start
-
-### For Developers (using the SDK)
-
-```python
-from x402_notify import NotifyClient
-
-# Initialize with your wallet
-client = NotifyClient(wallet_key="0x...")
-
-# Send notification - x402 payment handled automatically!
-client.notify(
-    chat_id="123456789",
-    message="🚨 Alert from my agent!"
-)
-```
-
-### For Users (getting Chat ID)
-
-1. Open Telegram
-2. Message [@x402aleartbot](https://t.me/x402aleartbot)
-3. Send `/getId`
-4. Copy your Chat ID
-
-## 📁 Repository Structure
-
-| Folder | Description | Deploy To |
-|--------|-------------|-----------|
-| `/gateway` | x402 API + Telegram Bot | Railway/Render |
-| `/sdk/python` | Python SDK | PyPI |
-| `/demo` | Whale Watcher example | Vercel |
-
-## 🔧 Local Development
+Quickstart (run demo locally)
+1. Create and activate a virtualenv from the repo root:
 
 ```bash
-# Gateway
-cd gateway
-npm install
-npm run dev
-
-# Demo
-cd demo
-npm install
-npm run dev
+python -m venv .venv
+source .venv/bin/activate
+pip install -r demo_service/requirements.txt
 ```
 
-## 🌐 Network
+2a. Run from repo root (recommended):
 
-- **Chain**: Base Sepolia (Testnet)
-- **Chain ID**: 84532
-- **Price**: 0.00001 ETH per message (~$0.02)
+```bash
+uvicorn demo_service.app:app --reload --port 8001
+```
 
-## 📜 License
+2b. Or run from inside `demo_service/`:
 
-MIT
+```bash
+cd demo_service
+uvicorn app:app --reload --port 8001
+```
+
+3. Use the demo frontend (if present) or `curl` to subscribe:
+
+```bash
+curl -X POST http://127.0.0.1:8001/subscribe -H "Content-Type: application/json" -d '{"chat_id":"123456789"}'
+```
+
+More details and SDK usage are in `sdk/python/README.md` and `demo_service/README.md`.
+
+Contributing
+- See `CONTRIBUTING.md` for contribution guidelines and how to run tests.
+
+License
+- Check `LICENSE` in the repository root (if present).

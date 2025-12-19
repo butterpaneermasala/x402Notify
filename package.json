@@ -1,8 +1,0 @@
-{
-  "name": "x402-notify",
-  "private": true,
-  "workspaces": [
-    "gateway",
-    "demo"
-  ]
-}

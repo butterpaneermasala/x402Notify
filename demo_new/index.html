@@ -18,16 +18,36 @@
 
       <div>
         <input id="chat" placeholder="Your Telegram chat id" />
-        <button id="sub">Subscribe</button>
-        <button id="unsub">Unsubscribe</button>
+        <button id="toggle">Subscribe</button>
       </div>
 
       <div style="margin-top:12px">
-        <strong>Current Price: </strong><span id="price">-</span>
-        &nbsp; <strong>Subscribers: </strong><span id="count">0</span>
+        <strong>How to get your Chat ID</strong>
+        <ol>
+          <li>Open Telegram and search for <b>@x402alertbot</b> (or your bot name).</li>
+          <li>Send <code>/getId</code> to the bot; it will reply with your chat id.</li>
+          <li>Paste that numeric chat id above and press <b>Subscribe</b>.</li>
+        </ol>
       </div>
 
-      <canvas id="chart" width="720" height="160"></canvas>
+      <div style="margin-top:12px">
+        <strong>Status:</strong> <span id="status-msg">Not subscribed</span>
+      </div>
+
+      <div style="margin-top:12px; display:flex; align-items:center; gap:16px">
+        <div>
+          <strong>Current Price: </strong><span id="price">-</span>
+        </div>
+        <div>
+          <strong>Subscribers: </strong><span id="count">0</span>
+        </div>
+        <div id="last-badge" style="margin-left:auto; background:rgba(255,255,255,0.04); padding:6px 10px; border-radius:8px">
+          <small style="opacity:0.8">Last</small>
+          <div id="last-price" style="font-weight:700">-</div>
+        </div>
+      </div>
+
+      <canvas id="chart" width="1200" height="320" style="height:320px"></canvas>
     </div>
 
     <script src="main.js"></script>

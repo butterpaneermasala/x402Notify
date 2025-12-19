@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: x402-demo-service
+    env: python
+    region: oregon
+    plan: free
+    buildCommand: pip install -r demo_service/requirements.txt
+    startCommand: uvicorn demo_service.app:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: AGENT_PRIVATE_KEY
+        sync: false
+      - key: GATEWAY_URL
+        value: https://x402notify.onrender.com
+      - key: DEMO_ALLOWED_ORIGINS
+        value: '*'
+      - key: DEMO_PERIOD
+        value: '60'
+    healthCheckPath: /status
+    branch: main
