@@ -1,0 +1,40 @@
+version: '3.8'
+services:
+  redis:
+    image: redis:7-alpine
+    ports:
+      - '6379:6379'
+
+  dev_service:
+    build:
+      context: .
+      dockerfile: ./dev_service/Dockerfile
+    environment:
+      - AGENT_PRIVATE_KEY=${AGENT_PRIVATE_KEY}
+      - GATEWAY_URL=${GATEWAY_URL:-http://host.docker.internal:3000}
+      - DEV_SERVICE_API_KEY=${DEV_SERVICE_API_KEY}
+      - REDIS_URL=redis://redis:6379/0
+      - RPC_URL=${RPC_URL:-https://sepolia.base.org}
+      - CHAIN_ID=${CHAIN_ID:-84532}
+    ports:
+      - '8001:8001'
+    depends_on:
+      - redis
+
+  rq_worker:
+    build:
+      context: .
+      dockerfile: ./dev_service/Dockerfile
+    command: sh -c "pip install rq redis && rq worker -u redis://redis:6379/0"
+    environment:
+      - AGENT_PRIVATE_KEY=${AGENT_PRIVATE_KEY}
+      - GATEWAY_URL=${GATEWAY_URL:-http://host.docker.internal:3000}
+      - REDIS_URL=redis://redis:6379/0
+      - RPC_URL=${RPC_URL:-https://sepolia.base.org}
+      - CHAIN_ID=${CHAIN_ID:-84532}
+    depends_on:
+      - redis
+
+# Tips:
+# - Set AGENT_PRIVATE_KEY in a .env file before running `docker-compose up`.
+# - The worker and dev_service images reuse the same Dockerfile for simplicity.
