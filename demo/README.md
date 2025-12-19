@@ -1,38 +1,11 @@
-# Whale Watcher Demo
+# Whale Watcher — Static Demo
 
-Example app built using x402-Notify SDK.
+This is a small static demo that simulates an ETH price feed and allows a user to subscribe/unsubscribe locally. Subscriptions are stored in `localStorage` and no network calls are made.
 
-## Deploy to Vercel
+How it works:
+- The feed simulates price data and toggles between crossing ≥4000 and dropping ≤3000 every minute.
+- When the simulated price crosses the thresholds, a notification is added to the Events log and 'Delivered to subscribers (simulated)' is added when subscribed.
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone)
-
-### Environment Variables
-
-| Variable | Description |
-|----------|-------------|
-| `VITE_GATEWAY_URL` | URL of your deployed Gateway (e.g., `https://gateway.railway.app`) |
-
-## Local Development
-
-```bash
-npm install
-npm run dev
-```
-
-## How It Works
-
-1. User enters their Telegram Chat ID
-2. Price simulator runs in the browser
-3. When price crosses thresholds:
-   - App calls Gateway's `/notify` endpoint
-   - Gets `402 Payment Required`
-   - In real SDK: pays via Base Sepolia
-   - Gateway verifies payment & delivers Telegram message
-
-## This is a DEMO
-
-This app demonstrates what developers can build using the **x402-Notify SDK**.
-
-The real product is:
-- **Gateway**: The x402-powered API that delivers messages
-- **SDK**: The library that handles payments automatically
+To run:
+1. Open `demo/index.html` in a browser (no server required).
+2. Enter an identifier in the input (optional) and click Subscribe.
