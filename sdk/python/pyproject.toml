@@ -18,6 +18,9 @@ dependencies = [
     "eth-account>=0.8.0",
 ]
 
+[project.optional-dependencies]
+http = ["httpx>=0.24.0"]
+
 [project.urls]
 Homepage = "https://github.com/x402-notify"
 

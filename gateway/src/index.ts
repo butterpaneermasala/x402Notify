@@ -25,6 +25,8 @@ const provider = new ethers.providers.JsonRpcProvider(RPC_URL);
 // Processed transactions store (simple file-backed cache for idempotency)
 import Redis from "ioredis";
 const REDIS_URL = process.env.REDIS_URL || null;
+const REDIS_CONNECT_RETRIES = parseInt(process.env.REDIS_CONNECT_RETRIES || "5", 10);
+const REDIS_CONNECT_DELAY_MS = parseInt(process.env.REDIS_CONNECT_DELAY_MS || "2000", 10);
 let redisClient: Redis | null = null;
 
 if (REDIS_URL) {
@@ -221,17 +223,34 @@ app.get("/", (req, res) => {
 async function startServer() {
     // If Redis is configured, verify connectivity before starting
     if (redisClient) {
-        try {
-            const pong = await redisClient.ping();
-            if (pong !== "PONG" && pong !== "OK") {
-                console.error("Redis ping returned unexpected response:", pong);
-                process.exit(1);
+        let attempt = 0;
+        let connected = false;
+        while (attempt < REDIS_CONNECT_RETRIES) {
+            try {
+                const pong = await redisClient.ping();
+                if (pong === "PONG" || pong === "OK") {
+                    connected = true;
+                    break;
+                } else {
+                    console.warn(`Redis ping returned unexpected response: ${pong}`);
+                }
+            } catch (e: any) {
+                console.warn(`Redis ping attempt ${attempt + 1} failed:`, e.message || e);
             }
-            console.log("✅ Connected to Redis for idempotency");
-        } catch (e: any) {
-            console.error("❌ Unable to connect to Redis at REDIS_URL:", e.message || e);
+
+            attempt += 1;
+            if (attempt < REDIS_CONNECT_RETRIES) {
+                console.log(`Retrying Redis connection in ${REDIS_CONNECT_DELAY_MS}ms... (attempt ${attempt + 1}/${REDIS_CONNECT_RETRIES})`);
+                await new Promise((r) => setTimeout(r, REDIS_CONNECT_DELAY_MS));
+            }
+        }
+
+        if (!connected) {
+            console.error(`❌ Unable to connect to Redis at REDIS_URL after ${REDIS_CONNECT_RETRIES} attempts`);
             process.exit(1);
         }
+
+        console.log("✅ Connected to Redis for idempotency");
     }
 
     app.listen(PORT, () => {
